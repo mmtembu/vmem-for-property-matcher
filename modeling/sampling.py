@@ -339,7 +339,7 @@ class EulerEDMSampler(object):
         guider: Union[VanillaCFG, MultiviewCFG, MultiviewTemporalCFG],
         num_steps: Union[int, None] = None,
         verbose: bool = False,
-        device: Union[str, torch.device] = "cuda",
+        device: str | torch.device = "cpu",
         s_churn=0.0,
         s_tmin=0.0,
         s_tmax=float("inf"),
@@ -445,7 +445,7 @@ def create_samplers(
     num_frames: Union[list[int], None],
     num_steps: int=50,
     cfg_min: float = 1.2,
-    device: Union[str, torch.device] = "cuda"
+    device: str | torch.device = "cpu"
 ):
     guider_mapping = {
         0: VanillaCFG,

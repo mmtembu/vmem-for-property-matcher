@@ -454,7 +454,7 @@ def load_img_and_K(
     center_crop: bool = False,
     image_as_tensor: bool = True,
     context_rgb: Union[np.ndarray, None] = None,
-    device: str = "cuda",
+    device: str | torch.device = "cpu",
 ):
     if isinstance(image_path_or_size, torch.Size):
         image = Image.new("RGBA", image_path_or_size[::-1])
@@ -707,7 +707,7 @@ def do_sample(
     verbose=True,
     global_pbar=None,
     return_latents=False,
-    device: str = "cuda",
+    device: str | torch.device = "cpu",
     **_,
 ):
 
@@ -716,9 +716,9 @@ def do_sample(
 
         additional_model_inputs = {"num_frames": T}
         additional_sampler_inputs = {
-            "c2w": c2w.to("cuda"),
-            "K": K.to("cuda"),
-            "input_frame_mask": cond_frames_mask.to("cuda"),
+            "c2w": c2w.to(device),
+            "K": K.to(device),
+            "input_frame_mask": cond_frames_mask.to(device),
         }
         if global_pbar is not None:
             additional_sampler_inputs["global_pbar"] = global_pbar
