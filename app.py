@@ -11,14 +11,20 @@ from omegaconf import OmegaConf
 from modeling.pipeline import VMemPipeline
 from diffusers.utils import export_to_video
 from navigation import Navigator
-from utils import tensor_to_pil, get_default_intrinsics, load_img_and_K, transform_img_and_K
+from utils import (
+    tensor_to_pil,
+    get_default_intrinsics,
+    load_img_and_K,
+    transform_img_and_K,
+    select_device,
+)
 import os
 import shutil
 
 
 CONFIG_PATH = "configs/inference/inference.yaml"
 CONFIG = OmegaConf.load(CONFIG_PATH)
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+DEVICE = select_device()
 MODEL = VMemPipeline(CONFIG, DEVICE)
 NAVIGATORS = []
 
