@@ -150,9 +150,9 @@ def prepare_input(
         "ray_map": torch.full(
                 (
                     images[i]["img"].shape[0],
-                    6,
                     images[i]["img"].shape[-2],
                     images[i]["img"].shape[-1],
+                    6,
                 ),
                 torch.nan,
             ),
@@ -506,9 +506,9 @@ def prepare_input_from_pil(
             "ray_map": torch.full(
                 (
                     imgs[i]["img"].shape[0],
-                    6,
                     imgs[i]["img"].shape[-2],
                     imgs[i]["img"].shape[-1],
+                    6,
                 ),
                 torch.nan,
             ),
