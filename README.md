@@ -67,6 +67,31 @@ We provide a demo for you to interact with `VMem`. Simply run
 python app.py
 ```
 
+## :toolbox: Troubleshooting
+
+### Selecting the computation device
+
+By default the code automatically selects the best device available (MPS on macOS,
+then CUDA, and finally CPU). You can override this behaviour by exporting
+`VMEM_DEVICE` before running:
+
+```bash
+VMEM_DEVICE=cpu python app.py
+```
+
+### MPS out-of-memory errors
+
+If you encounter errors like `MPS backend out of memory` when using MPS you can
+relax the memory limit by setting:
+
+```bash
+export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0
+```
+
+Use this option with care as it may lead to system instability if the GPU memory
+is fully exhausted.
+
+
 
 ## :heart: Acknowledgement
 This work is built on top of [CUT3R](https://github.com/CUT3R/CUT3R), [DUSt3R](https://github.com/naver/dust3r) and [Stable Virtual Camera](https://github.com/stability-ai/stable-virtual-camera). We thank them for their great works.
