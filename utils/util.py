@@ -408,9 +408,19 @@ def transform_img_and_K(
         (rh, rw) = [int(np.ceil(rfs * s)) for s in (h, w)]
 
     rh, rw = int(rh / scale), int(rw / scale)
-    image = torch.nn.functional.interpolate(
-        image, (rh, rw), mode="area", antialias=False
-    )
+    # MPS backend only supports area interpolation when the input size is
+    # divisible by the output size. To avoid runtime errors on macOS, perform
+    # the interpolation on CPU when running on an MPS device.
+    if image.device.type == "mps":
+        image_cpu = image.cpu()
+        image_cpu = torch.nn.functional.interpolate(
+            image_cpu, (rh, rw), mode="area", antialias=False
+        )
+        image = image_cpu.to(image.device)
+    else:
+        image = torch.nn.functional.interpolate(
+            image, (rh, rw), mode="area", antialias=False
+        )
 
     cy_center = int(center[1] * image.shape[-2])
     cx_center = int(center[0] * image.shape[-1])
