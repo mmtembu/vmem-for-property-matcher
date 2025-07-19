@@ -540,6 +540,8 @@ def weighted_procrustes(A, B, w, use_weights=True, eps=1e-16, return_T=False):
 
         H = torch.einsum("bij,bik->bjk", A_c, B_c)
 
+    # torch.svd doesn't support float16 on CPU/MPS. Cast to float32 before SVD.
+    H = H.float()
     U, S, V = torch.svd(H)  # U: B x 3 x 3, S: B x 3, V: B x 3 x 3
     Z = torch.eye(3).unsqueeze(0).repeat(A.shape[0], 1, 1).to(A.device)
     Z[:, -1, -1] = torch.sign(torch.linalg.det(U @ V.transpose(1, 2)))  # B x 3 x 3
