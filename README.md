@@ -38,6 +38,17 @@ conda activate vmem
 pip install -r requirements.txt
 ```
 
+If you are on macOS with Apple Silicon, install PyTorch with MPS support
+before installing the rest of the requirements:
+
+```bash
+pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+```
+
+The optional CUDA extension `curope` cannot be built on MPS. If you do not
+have CUDA available you can simply skip compiling it, the code will fall back
+to a slower PyTorch implementation.
+
 
 # :rocket: Usage
 
