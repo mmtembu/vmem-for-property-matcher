@@ -22,6 +22,19 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 DEFAULT_FOV_RAD = 0.9424777960769379  # 54 degrees by default
 
 
+def select_device() -> torch.device:
+    """Return the best available device.
+
+    Prioritizes Metal Performance Shaders (MPS) on macOS, then CUDA,
+    falling back to CPU.
+    """
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    return torch.device("cpu")
+
+
 
 def get_default_intrinsics(
     fov_rad=DEFAULT_FOV_RAD,
