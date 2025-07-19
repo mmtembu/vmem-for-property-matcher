@@ -245,6 +245,13 @@ def estimate_focal(pts3d_i, pp=None):
 
 
 def rigid_points_registration(pts1, pts2, conf):
+    """Wrapper around :func:`roma.rigid_points_registration` with type safety."""
+
+    # Ensure inputs are float32 to avoid half-precision errors on CPU/MPS
+    pts1 = pts1.to(dtype=torch.float32)
+    pts2 = pts2.to(dtype=torch.float32)
+    conf = conf.to(dtype=torch.float32)
+
     R, T, s = roma.rigid_points_registration(
         pts1.reshape(-1, 3),
         pts2.reshape(-1, 3),
@@ -411,7 +418,9 @@ def align_multiple_poses(src_poses, target_poses):
         return torch.cat((poses[:, :3, 3], poses[:, :3, 3] + eps * poses[:, :3, 2]))
 
     R, T, s = roma.rigid_points_registration(
-        center_and_z(src_poses), center_and_z(target_poses), compute_scaling=True
+        center_and_z(src_poses).to(dtype=torch.float32),
+        center_and_z(target_poses).to(dtype=torch.float32),
+        compute_scaling=True,
     )
     return s, R, T
 
