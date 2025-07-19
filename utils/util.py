@@ -23,11 +23,24 @@ DEFAULT_FOV_RAD = 0.9424777960769379  # 54 degrees by default
 
 
 def select_device() -> torch.device:
-    """Return the best available device.
+    """Return the device to use for computation.
 
-    Prioritizes Metal Performance Shaders (MPS) on macOS, then CUDA,
-    falling back to CPU.
+    The function checks the ``VMEM_DEVICE`` environment variable which can be
+    set to ``"cpu"``, ``"cuda"`` or ``"mps"`` to explicitly choose the device.
+    If the variable is not set, it will automatically prefer MPS (on macOS),
+    then CUDA and finally CPU.
     """
+
+    env_choice = os.getenv("VMEM_DEVICE")
+    if env_choice:
+        env_choice = env_choice.lower()
+        if env_choice == "cpu":
+            return torch.device("cpu")
+        if env_choice == "cuda" and torch.cuda.is_available():
+            return torch.device("cuda")
+        if env_choice == "mps" and torch.backends.mps.is_available():
+            return torch.device("mps")
+
     if torch.backends.mps.is_available():
         return torch.device("mps")
     if torch.cuda.is_available():
