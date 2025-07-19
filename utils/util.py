@@ -35,6 +35,10 @@ def select_device() -> torch.device:
     return torch.device("cpu")
 
 
+# Chosen device for operations
+DEVICE = select_device()
+
+
 
 def get_default_intrinsics(
     fov_rad=DEFAULT_FOV_RAD,
@@ -708,7 +712,7 @@ def do_sample(
 ):
 
     num_samples = [1, T]
-    with torch.inference_mode(), torch.autocast("cuda"):
+    with torch.inference_mode(), torch.autocast(device_type=DEVICE.type):
 
         additional_model_inputs = {"num_frames": T}
         additional_sampler_inputs = {

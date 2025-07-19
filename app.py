@@ -159,7 +159,7 @@ def get_duration_navigate_video(video: torch.Tensor,
     return base_duration
 
 @spaces.GPU(duration=get_duration_navigate_video)
-@torch.autocast("cuda")
+@torch.autocast(device_type=DEVICE.type)
 @torch.no_grad()
 def navigate_video(
     video: torch.Tensor,
