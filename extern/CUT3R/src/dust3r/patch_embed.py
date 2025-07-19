@@ -18,12 +18,10 @@ def get_patch_embed(patch_embed_cls, img_size, patch_size, enc_embed_dim, in_cha
 class PatchEmbedDust3R(PatchEmbed):
     def forward(self, x, **kw):
         B, C, H, W = x.shape
-        assert (
-            H % self.patch_size[0] == 0
-        ), f"Input image height ({H}) is not a multiple of patch size ({self.patch_size[0]})."
-        assert (
-            W % self.patch_size[1] == 0
-        ), f"Input image width ({W}) is not a multiple of patch size ({self.patch_size[1]})."
+        pad_h = (self.patch_size[0] - H % self.patch_size[0]) % self.patch_size[0]
+        pad_w = (self.patch_size[1] - W % self.patch_size[1]) % self.patch_size[1]
+        if pad_h or pad_w:
+            x = torch.nn.functional.pad(x, (0, pad_w, 0, pad_h))
         x = self.proj(x)
         pos = self.position_getter(B, x.size(2), x.size(3), x.device)
         if self.flatten:
@@ -53,12 +51,10 @@ class ManyAR_PatchEmbed(PatchEmbed):
     def forward(self, img, true_shape):
         B, C, H, W = img.shape
 
-        assert (
-            H % self.patch_size[0] == 0
-        ), f"Input image height ({H}) is not a multiple of patch size ({self.patch_size[0]})."
-        assert (
-            W % self.patch_size[1] == 0
-        ), f"Input image width ({W}) is not a multiple of patch size ({self.patch_size[1]})."
+        pad_h = (self.patch_size[0] - H % self.patch_size[0]) % self.patch_size[0]
+        pad_w = (self.patch_size[1] - W % self.patch_size[1]) % self.patch_size[1]
+        if pad_h or pad_w:
+            img = torch.nn.functional.pad(img, (0, pad_w, 0, pad_h))
         assert true_shape.shape == (
             B,
             2,
